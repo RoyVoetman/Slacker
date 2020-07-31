@@ -1,0 +1,6 @@
+.DS_Store
+.idea
+venv
+flask_session
+__pycache__
+uploads/

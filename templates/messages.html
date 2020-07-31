@@ -1,0 +1,75 @@
+{% extends "layout.html" %}
+
+{% block title %}Messages{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/messages.js') }}"></script>
+{% raw -%}
+<script id="message" type="text/x-handlebars-template">
+    <li class="media my-4">
+        <div class="row w-100">
+            <div class="col-1 d-flex">
+                <div class="mx-auto text-center align-self-center w-100">
+                    <img src="/static/img/user.svg" class="mr-3 img-fluid" alt="User">
+                </div>
+            </div>
+            <div class="col-11">
+                <h5 class="mt-0 mb-1">{{ displayName }}<span class="badge badge-primary badge-pill pull-right">{{ createdAt }}</span></h5>
+                <div>{{ message }}</div>
+                {{#exists attachment}}
+                    <br>
+                    <div><a href="/download/{{ attachment }}">Attachment</a></div>
+                {{/exists}}
+            </div>
+        </div>
+    </li>
+</script>
+{%- endraw %}
+{% endblock %}
+
+{% block body %}
+<div class="card-header">
+    <h5>Messages</h5>
+</div>
+
+<div class="card-body">
+    <ul class="list-unstyled" id="messages" data-channel="{{ channel }}">
+        {% for message in messages %}
+        <li class="media my-4">
+            <div class="row w-100">
+                <div class="col-1 d-flex">
+                    <div class="mx-auto text-center align-self-center w-100">
+                        <img src="/static/img/user.svg" class="mr-3 img-fluid" alt="User">
+                    </div>
+                </div>
+                <div class="col-11">
+                    <h5 class="mt-0 mb-1">{{ message['displayName'] }}<span class="badge badge-primary badge-pill pull-right">{{ message['created_at'] }}</span></h5>
+                    <div>{{ message['message'] }}</div>
+                    {% if 'attachment' in message %}
+                        <br>
+                        <div><a href="{{ url_for('download', filename=message['attachment']) }}">Attachment</a></div>
+                    {% endif %}
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<form action="#" method="post" id="submit-message" class="w-100" enctype="multipart/form-data">
+    <div class="form-group mb-0">
+        <div class="input-group w-100 pt-4">
+            <input class="form-control" name="message" type="text" placeholder="...">
+            <span class="input-group-append">
+                <div class="upload-btn-wrapper">
+                    <button class="btn btn-success" type="button"><i class="fa fa-paperclip" aria-hidden="true"></i></button>
+                    <input type="file" name="attachment">
+                </div>
+            </span>
+            <span class="input-group-append">
+                <button class="btn btn-info" type="submit"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+            </span>
+        </div>
+    </div>
+</form>
+{% endblock %}
